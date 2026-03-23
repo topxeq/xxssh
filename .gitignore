@@ -1,0 +1,5 @@
+# Release binaries
+xxssh-linux-amd64
+xxssh-darwin-amd64
+xxssh-darwin-arm64
+xxssh-windows-amd64.exe
