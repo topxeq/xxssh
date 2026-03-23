@@ -50,6 +50,7 @@ func (a *App) createServerList(cfg *config.StoresConfig) tview.Primitive {
 				return nil
 			}
 		}
+		// Let other keys (arrows, enter, etc.) pass through to the list
 		return event
 	})
 
@@ -132,24 +133,29 @@ func (a *App) showError(msg string) {
 		SetText(msg).
 		AddButtons([]string{"OK"}).
 		SetDoneFunc(func(_ int, _ string) {
-			a.pages.SwitchToPage("main")
+			a.pages.RemovePage("error")
 		})
 	a.pages.AddPage("error", modal, true, true)
-	a.pages.SwitchToPage("error")
 }
 
 func (a *App) promptReconnect() bool {
-	result := make(chan int)
+	done := make(chan bool, 1)
+
 	modal := tview.NewModal().
 		SetText("Connection lost. Reconnect?").
 		AddButtons([]string{"Reconnect", "Back to List"}).
 		SetDoneFunc(func(buttonIndex int, _ string) {
-			result <- buttonIndex
+			done <- (buttonIndex == 0)
 		})
 	a.pages.AddPage("reconnect", modal, true, true)
 	a.pages.SwitchToPage("reconnect")
 
 	// Wait for result
-	button := <-result
-	return button == 0
+	select {
+	case reconnect := <-done:
+		a.pages.RemovePage("reconnect")
+		return reconnect
+	case <-done: // channel closed
+		return false
+	}
 }
