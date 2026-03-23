@@ -52,7 +52,6 @@ func (a *App) setupMainView() error {
 	a.pages.AddPage("main", flex, true, true)
 	a.app.SetRoot(a.pages, true)
 	a.app.SetFocus(list)
-	a.app.Draw()
 
 	return nil
 }
