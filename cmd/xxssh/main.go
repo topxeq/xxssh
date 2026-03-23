@@ -6,15 +6,14 @@ import (
 	"os"
 
 	"github.com/topxeq/xxssh/internal/store"
-	"github.com/topxeq/xxssh/internal/tui"
+	"github.com/topxeq/xxssh/internal/termui"
 )
 
 var version = "dev"
 
 func main() {
-	noColor := flag.Bool("no-color", false, "Disable color output")
 	showVersion := flag.Bool("version", false, "Show version")
-	resetConfig := flag.Bool("reset", false, "Reset all configuration (delete all servers and master password)")
+	resetConfig := flag.Bool("reset", false, "Reset all configuration")
 
 	flag.Parse()
 
@@ -37,18 +36,14 @@ func main() {
 		os.Exit(0)
 	}
 
-	if *noColor {
-		tui.SetForceColor(false)
-	}
-
 	st, err := store.NewStore()
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "Failed to initialize store:", err)
 		os.Exit(1)
 	}
 
-	app := tui.NewApp(st)
-	if err := app.Run(); err != nil {
+	ui := termui.NewUI(st)
+	if err := ui.Run(); err != nil {
 		fmt.Fprintln(os.Stderr, "Error running app:", err)
 		os.Exit(1)
 	}
