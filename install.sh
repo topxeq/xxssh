@@ -15,8 +15,11 @@ detect_os() {
         MINGW*)     echo "windows";;
         MINGW64*)   echo "windows";;
         *)
-            # Fallback: check environment
-            if echo "$os_info" | grep -qi "mingw\|msys\|cygwin"; then
+            # Fallback: check environment and OSTYPE
+            local ostype="${OSTYPE:-}"
+            if echo "$os_info $ostype" | grep -qi "mingw\|msys\|cygwin\|windows"; then
+                echo "windows"
+            elif [ -n "$COMSPEC" ] && echo "$COMSPEC" | grep -qi "cmd.exe"; then
                 echo "windows"
             else
                 echo "unsupported"
