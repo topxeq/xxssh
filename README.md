@@ -25,6 +25,28 @@ Or with wget:
 wget -qO- https://raw.githubusercontent.com/topxeq/xxssh/master/install.sh | bash
 ```
 
+### Windows
+
+**PowerShell (recommended):**
+
+```powershell
+irm https://github.com/topxeq/xxssh/releases/latest/download/xxssh-windows-amd64.exe -o xxssh.exe
+```
+
+**CMD:**
+
+```cmd
+curl -fsSL https://github.com/topxeq/xxssh/releases/latest/download/xxssh-windows-amd64.exe -o xxssh.exe
+```
+
+**Git Bash / MSYS2:**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/topxeq/xxssh/master/install.sh | bash
+```
+
+Then run `xxssh.exe` from the current directory or add it to your PATH.
+
 ### Manual Download
 
 Download the appropriate binary for your platform from [Releases](https://github.com/topxeq/xxssh/releases/latest):

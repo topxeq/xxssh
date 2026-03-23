@@ -25,6 +25,28 @@ curl -fsSL https://raw.githubusercontent.com/topxeq/xxssh/master/install.sh | ba
 wget -qO- https://raw.githubusercontent.com/topxeq/xxssh/master/install.sh | bash
 ```
 
+### Windows
+
+**PowerShell（推荐）：**
+
+```powershell
+irm https://github.com/topxeq/xxssh/releases/latest/download/xxssh-windows-amd64.exe -o xxssh.exe
+```
+
+**CMD：**
+
+```cmd
+curl -fsSL https://github.com/topxeq/xxssh/releases/latest/download/xxssh-windows-amd64.exe -o xxssh.exe
+```
+
+**Git Bash / MSYS2：**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/topxeq/xxssh/master/install.sh | bash
+```
+
+下载后直接运行 `xxssh.exe`，或将其加入 PATH 环境变量。
+
 ### 手动下载
 
 从 [Releases](https://github.com/topxeq/xxssh/releases/latest) 下载对应平台的二进制文件：
