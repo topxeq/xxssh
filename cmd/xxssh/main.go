@@ -9,9 +9,18 @@ import (
 	"github.com/topxeq/xxssh/internal/tui"
 )
 
+var version = "dev"
+
 func main() {
 	noColor := flag.Bool("no-color", false, "Disable color output")
+	showVersion := flag.Bool("version", false, "Show version")
+
 	flag.Parse()
+
+	if *showVersion {
+		fmt.Println("xxssh version:", version)
+		os.Exit(0)
+	}
 
 	if *noColor {
 		tui.SetForceColor(false)
