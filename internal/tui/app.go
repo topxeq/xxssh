@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 	"github.com/topxeq/xxssh/internal/config"
 	"github.com/topxeq/xxssh/internal/store"
@@ -43,7 +44,12 @@ func (a *App) setupMainView() error {
 
 	list := a.createServerList(cfg)
 
-	a.pages.AddPage("main", list, true, true)
+	// Wrap list in a Flex with black background for visibility
+	flex := tview.NewFlex().
+		AddItem(list, 0, 1, true)
+	flex.SetBackgroundColor(tcell.ColorBlack)
+
+	a.pages.AddPage("main", flex, true, true)
 	a.app.SetRoot(a.pages, true)
 	a.app.SetFocus(list)
 	a.app.Draw()
