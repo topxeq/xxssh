@@ -13,6 +13,7 @@ import (
 
 func (a *App) createServerList(cfg *config.StoresConfig) tview.Primitive {
 	list := tview.NewList()
+	list.SetBorder(true).SetTitle("xxssh - SSH Client")
 
 	for i, srv := range cfg.Servers {
 		idx := i

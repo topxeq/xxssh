@@ -1,6 +1,9 @@
 package tui
 
 import (
+	"fmt"
+	"os"
+
 	"github.com/rivo/tview"
 	"github.com/topxeq/xxssh/internal/config"
 	"github.com/topxeq/xxssh/internal/store"
@@ -35,6 +38,8 @@ func (a *App) setupMainView() error {
 	if err != nil {
 		cfg = &config.StoresConfig{}
 	}
+
+	fmt.Fprintf(os.Stderr, "[DEBUG] setupMainView: %d servers\n", len(cfg.Servers))
 
 	list := a.createServerList(cfg)
 
