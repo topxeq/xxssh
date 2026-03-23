@@ -3,6 +3,7 @@ package tui
 import (
 	"strconv"
 
+	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 	"github.com/topxeq/xxssh/internal/config"
 )
@@ -62,12 +63,12 @@ func (a *App) showEditForm(idx int) {
 			cfg.Servers[idx] = srv
 		}
 		a.store.Save(cfg)
-		a.refreshMainView()
-		a.pages.SwitchToPage("main")
+		a.pages.RemovePage("form")
+		a.setupMainView()
 	})
 
 	form.AddButton("Cancel", func() {
-		a.pages.SwitchToPage("main")
+		a.pages.RemovePage("form")
 	})
 
 	title := "Add Server"
@@ -75,6 +76,16 @@ func (a *App) showEditForm(idx int) {
 		title = "Edit Server"
 	}
 	form.SetBorder(true).SetTitle(title)
-	a.pages.AddPage("form", form, true, true)
-	a.pages.SwitchToPage("form")
+
+	// Wrap in Flex with black background to cover previous content
+	flex := tview.NewFlex().
+		SetDirection(tview.FlexRow).
+		AddItem(tview.NewBox(), 0, 1, false).
+		AddItem(form, 0, 1, true).
+		AddItem(tview.NewBox(), 0, 1, false)
+	flex.SetBackgroundColor(tcell.ColorBlack)
+
+	a.pages.AddPage("form", flex, true, true)
+	a.app.SetRoot(a.pages, true)
+	a.app.SetFocus(form)
 }
