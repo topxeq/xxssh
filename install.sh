@@ -73,12 +73,12 @@ chmod +x "${BINARY_NAME}${ext}"
 # Create install directory if needed
 mkdir -p "$INSTALL_DIR"
 
-# Move binary to install location
-mv "${BINARY_NAME}${ext}" "${INSTALL_DIR}/${BINARY_NAME}${ext}"
+# Move binary to install location (rename to just xxssh, no platform suffix)
+mv "${BINARY_NAME}${ext}" "${INSTALL_DIR}/${BINARY_NAME}"
 
 # Cleanup
 cd /
 rm -rf "$tmp_dir"
 
-echo "Successfully installed to ${INSTALL_DIR}/${BINARY_NAME}${ext}"
+echo "Successfully installed to ${INSTALL_DIR}/${BINARY_NAME}"
 echo "Add ${INSTALL_DIR} to your PATH if needed"
