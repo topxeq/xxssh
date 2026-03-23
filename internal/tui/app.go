@@ -104,13 +104,17 @@ func (a *App) showMasterPasswordSetup() error {
 			return
 		}
 
-		// Success - switch to main view
-		a.pages.SwitchToPage("main")
+		// Success - create main view
+		a.pages.RemovePage("setup")
+		a.pages.RemovePage("message")
+		a.setupMainView()
 	})
 
 	form.AddButton("Skip", func() {
-		// Skip encryption - continue to main view
-		a.pages.SwitchToPage("main")
+		// Skip encryption - create main view
+		a.pages.RemovePage("setup")
+		a.pages.RemovePage("message")
+		a.setupMainView()
 	})
 
 	centered := tview.NewFlex().
@@ -142,8 +146,10 @@ func (a *App) showMasterPasswordUnlock() error {
 			return
 		}
 
-		// Success - switch to main view
-		a.pages.SwitchToPage("main")
+		// Success - create main view and switch to it
+		a.pages.RemovePage("unlock")
+		a.pages.RemovePage("message")
+		a.setupMainView()
 	})
 
 	form.AddButton("Cancel", func() {
