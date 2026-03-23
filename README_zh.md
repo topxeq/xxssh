@@ -16,13 +16,13 @@
 ### 一键安装 (Linux/macOS)
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/topxeq/xxssh/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/topxeq/xxssh/main/repo/install.sh | bash
 ```
 
 或使用 wget：
 
 ```bash
-wget -qO- https://raw.githubusercontent.com/topxeq/xxssh/main/install.sh | bash
+wget -qO- https://raw.githubusercontent.com/topxeq/xxssh/main/repo/install.sh | bash
 ```
 
 ### 手动下载
