@@ -33,13 +33,11 @@ func (a *App) Run() error {
 		if err := a.showMasterPasswordSetup(); err != nil {
 			return err
 		}
-		// setupMainView is called inside the form button handlers
 		return a.app.Run()
 	} else if !a.store.IsUnlocked() {
 		if err := a.showMasterPasswordUnlock(); err != nil {
 			return err
 		}
-		// setupMainView is called inside the form button handlers
 		return a.app.Run()
 	}
 
@@ -81,58 +79,52 @@ func (a *App) showMasterPasswordSetup() error {
 	form := tview.NewForm()
 	form.SetBorder(true).SetTitle("Set Master Password")
 
-	form.AddInputField("Password", "", 40, nil, nil)
-	form.AddInputField("Confirm Password", "", 40, nil, nil)
+	form.AddPasswordField("Password", "", 30, '*', nil)
+	form.AddPasswordField("Confirm", "", 30, '*', nil)
 
 	form.AddButton("Set Password", func() {
 		password := form.GetFormItemByLabel("Password").(*tview.InputField).GetText()
-		confirm := form.GetFormItemByLabel("Confirm Password").(*tview.InputField).GetText()
+		confirm := form.GetFormItemByLabel("Confirm").(*tview.InputField).GetText()
 
 		if password == "" {
-			showErrorModal(a.pages, "Password cannot be empty")
+			showMessage(a.app, a.pages, "Error", "Password cannot be empty")
 			return
 		}
 		if password != confirm {
-			showErrorModal(a.pages, "Passwords do not match")
+			showMessage(a.app, a.pages, "Error", "Passwords do not match")
 			return
 		}
 		if len(password) < 4 {
-			showErrorModal(a.pages, "Password must be at least 4 characters")
+			showMessage(a.app, a.pages, "Error", "Password must be at least 4 characters")
 			return
 		}
 
 		if err := a.store.SetMasterPassword(password); err != nil {
-			showErrorModal(a.pages, err.Error())
+			showMessage(a.app, a.pages, "Error", err.Error())
 			return
 		}
 
-		// Success - remove all pages and continue to main view
-		a.pages.RemovePage("password_setup")
-		a.pages.RemovePage("error")
-		a.setupMainView()
+		// Success - switch to main view
+		a.pages.SwitchToPage("main")
 	})
 
-	form.AddButton("Skip (Not Recommended)", func() {
-		// Skip encryption - will use no master password
-		a.pages.RemovePage("password_setup")
-		a.setupMainView()
+	form.AddButton("Skip", func() {
+		// Skip encryption - continue to main view
+		a.pages.SwitchToPage("main")
 	})
 
-	a.pages.AddPage("password_setup", form, true, true)
+	centered := tview.NewFlex().
+		SetDirection(tview.FlexRow).
+		AddItem(tview.NewBox(), 0, 1, false).
+		AddItem(form, 0, 1, true).
+		AddItem(tview.NewBox(), 0, 1, false)
+
+	a.pages.AddPage("setup", centered, true, true)
+	a.pages.SwitchToPage("setup")
 	a.app.SetRoot(a.pages, true)
 	a.app.SetFocus(form)
 
 	return nil
-}
-
-func showErrorModal(pages *tview.Pages, message string) {
-	modal := tview.NewModal().
-		SetText(message).
-		AddButtons([]string{"OK"}).
-		SetDoneFunc(func(_ int, _ string) {
-			pages.RemovePage("error")
-		})
-	pages.AddPage("error", modal, true, true)
 }
 
 // showMasterPasswordUnlock shows the password unlock dialog
@@ -140,29 +132,59 @@ func (a *App) showMasterPasswordUnlock() error {
 	form := tview.NewForm()
 	form.SetBorder(true).SetTitle("Enter Master Password")
 
-	form.AddInputField("Password", "", 40, nil, nil)
+	form.AddPasswordField("Password", "", 30, '*', nil)
 
 	form.AddButton("Unlock", func() {
 		password := form.GetFormItemByLabel("Password").(*tview.InputField).GetText()
 
 		if err := a.store.Unlock(password); err != nil {
-			showErrorModal(a.pages, "Invalid password: "+err.Error())
+			showMessage(a.app, a.pages, "Error", "Invalid password")
 			return
 		}
 
-		// Success - remove all pages and continue to main view
-		a.pages.RemovePage("password_unlock")
-		a.pages.RemovePage("error")
-		a.setupMainView()
+		// Success - switch to main view
+		a.pages.SwitchToPage("main")
 	})
 
 	form.AddButton("Cancel", func() {
 		a.app.Stop()
 	})
 
-	a.pages.AddPage("password_unlock", form, true, true)
+	centered := tview.NewFlex().
+		SetDirection(tview.FlexRow).
+		AddItem(tview.NewBox(), 0, 1, false).
+		AddItem(form, 0, 1, true).
+		AddItem(tview.NewBox(), 0, 1, false)
+
+	a.pages.AddPage("unlock", centered, true, true)
+	a.pages.SwitchToPage("unlock")
 	a.app.SetRoot(a.pages, true)
 	a.app.SetFocus(form)
 
 	return nil
+}
+
+// showMessage shows an error/info message using Form as modal
+func showMessage(app *tview.Application, pages *tview.Pages, title, message string) {
+	form := tview.NewForm()
+	form.SetBorder(true).SetTitle(title)
+
+	label := tview.NewTextView()
+	label.SetText(message)
+	label.SetTextAlign(tview.AlignCenter)
+
+	form.AddButton("OK", func() {
+		pages.RemovePage("message")
+	})
+
+	centered := tview.NewFlex().
+		SetDirection(tview.FlexRow).
+		AddItem(tview.NewBox(), 0, 1, false).
+		AddItem(label, 0, 1, false).
+		AddItem(form, 0, 1, true).
+		AddItem(tview.NewBox(), 0, 1, false)
+
+	pages.AddPage("message", centered, true, true)
+	app.SetRoot(pages, true)
+	app.SetFocus(form)
 }
