@@ -231,3 +231,10 @@ func (s *Store) SaveRaw(cfg *config.StoresConfig) error {
 	}
 	return os.WriteFile(s.filePath, data, 0600)
 }
+
+// Reset deletes all configuration data
+func (s *Store) Reset() error {
+	s.masterKey = nil
+	s.isUnlocked = false
+	return os.Remove(s.filePath)
+}
