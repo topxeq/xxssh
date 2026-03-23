@@ -106,8 +106,9 @@ func (a *App) showMasterPasswordSetup() error {
 			return
 		}
 
-		// Success - continue to main view
+		// Success - remove all pages and continue to main view
 		a.pages.RemovePage("password_setup")
+		a.pages.RemovePage("error")
 		a.setupMainView()
 	})
 
@@ -149,8 +150,9 @@ func (a *App) showMasterPasswordUnlock() error {
 			return
 		}
 
-		// Success - continue to main view
+		// Success - remove all pages and continue to main view
 		a.pages.RemovePage("password_unlock")
+		a.pages.RemovePage("error")
 		a.setupMainView()
 	})
 
