@@ -16,13 +16,13 @@ A cross-platform SSH client with terminal support.
 ### One-liner (Linux/macOS)
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/topxeq/xxssh/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/topxeq/xxssh/master/install.sh | bash
 ```
 
 Or with wget:
 
 ```bash
-wget -qO- https://raw.githubusercontent.com/topxeq/xxssh/main/install.sh | bash
+wget -qO- https://raw.githubusercontent.com/topxeq/xxssh/master/install.sh | bash
 ```
 
 ### Manual Download
