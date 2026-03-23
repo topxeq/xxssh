@@ -2,6 +2,7 @@ package tui
 
 import (
 	"github.com/rivo/tview"
+	"github.com/topxeq/xxssh/internal/config"
 	"github.com/topxeq/xxssh/internal/store"
 )
 
@@ -30,6 +31,16 @@ func (a *App) Run() error {
 }
 
 func (a *App) setupMainView() error {
+	cfg, err := a.store.Load()
+	if err != nil {
+		cfg = &config.StoresConfig{}
+	}
+
+	list := a.createServerList(cfg)
+
+	a.pages.AddPage("main", list, true, true)
+	a.app.SetRoot(a.pages, true)
+
 	return nil
 }
 
