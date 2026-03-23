@@ -6,18 +6,30 @@ INSTALL_DIR="${INSTALL_DIR:-$HOME/bin}"
 BINARY_NAME="xxssh"
 
 detect_os() {
-    case "$(uname -s)" in
+    local os_info="$(uname -s 2>/dev/null || echo '')"
+    case "$os_info" in
         Linux*)     echo "linux";;
         Darwin*)    echo "darwin";;
         CYGWIN*)    echo "windows";;
+        MSYS*)      echo "windows";;
         MINGW*)     echo "windows";;
-        *)          echo "unsupported";;
+        MINGW64*)   echo "windows";;
+        *)
+            # Fallback: check environment
+            if echo "$os_info" | grep -qi "mingw\|msys\|cygwin"; then
+                echo "windows"
+            else
+                echo "unsupported"
+            fi
+            ;;
     esac
 }
 
 detect_arch() {
-    case "$(uname -m)" in
+    local arch_info="$(uname -m 2>/dev/null || echo '')"
+    case "$arch_info" in
         x86_64)     echo "amd64";;
+        amd64)      echo "amd64";;
         aarch64|arm64) echo "arm64";;
         *)          echo "amd64";;
     esac
@@ -37,6 +49,8 @@ get_download_url() {
 version="${1:-v1.0.0}"
 os=$(detect_os)
 arch=$(detect_arch)
+
+echo "Detected OS: $os, Arch: $arch"
 
 if [ "$os" = "unsupported" ]; then
     echo "Error: Unsupported operating system" >&2
@@ -67,18 +81,25 @@ else
     exit 1
 fi
 
-# Make it executable
-chmod +x "${BINARY_NAME}${ext}"
+# Make it executable (skip on Windows)
+if [ "$os" != "windows" ]; then
+    chmod +x "${BINARY_NAME}${ext}"
+fi
 
 # Create install directory if needed
 mkdir -p "$INSTALL_DIR"
 
 # Move binary to install location (rename to just xxssh, no platform suffix)
-mv "${BINARY_NAME}${ext}" "${INSTALL_DIR}/${BINARY_NAME}"
+if [ "$os" = "windows" ]; then
+    mv "${BINARY_NAME}${ext}" "${INSTALL_DIR}/${BINARY_NAME}.exe"
+    echo "Successfully installed to ${INSTALL_DIR}/${BINARY_NAME}.exe"
+else
+    mv "${BINARY_NAME}${ext}" "${INSTALL_DIR}/${BINARY_NAME}"
+    echo "Successfully installed to ${INSTALL_DIR}/${BINARY_NAME}"
+fi
 
 # Cleanup
 cd /
 rm -rf "$tmp_dir"
 
-echo "Successfully installed to ${INSTALL_DIR}/${BINARY_NAME}"
 echo "Add ${INSTALL_DIR} to your PATH if needed"
